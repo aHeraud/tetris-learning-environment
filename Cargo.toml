@@ -1,0 +1,9 @@
+[package]
+name = "tetris-learning-environment"
+version = "0.1.0"
+authors = ["Atlas <achille@heraud.xyz>"]
+edition = "2018"
+
+[dependencies]
+rand = "0.5.5"
+agb-core = {git = "https://github.com/aHeraud/agb", rev="f87b0beefeeaf12985e80d99b14fc7c2e46c576c" }
