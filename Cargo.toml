@@ -6,4 +6,4 @@ edition = "2018"
 
 [dependencies]
 rand = "0.5.5"
-agb-core = {git = "https://github.com/aHeraud/agb", rev="f87b0beefeeaf12985e80d99b14fc7c2e46c576c" }
+agb-core = {git = "https://github.com/aHeraud/agb", rev="eccc79e29e631856fca0d17a834ba3ab6af6b5a1" }
