@@ -55,6 +55,11 @@ int32_t get_score(const Environment *env_ptr);
 Environment *initialize_environment(const char *rom_path_ptr);
 
 /*
+ * Whether or not the game is currently still in progress, if false then the game has ended
+ */
+bool is_running(const Environment *env_ptr);
+
+/*
  * Run a single frame of the game
  */
 void run_frame(Environment *env_ptr);

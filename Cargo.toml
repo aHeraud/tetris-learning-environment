@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Atlas <achille@heraud.xyz>"]
 edition = "2018"
 
+[lib]
+crate-type = ["dylib"]
+
 [dependencies]
 rand = "0.5.5"
-agb-core = {git = "https://github.com/aHeraud/agb", rev="eccc79e29e631856fca0d17a834ba3ab6af6b5a1" }
+agb-core = {git = "https://github.com/aHeraud/agb", rev="0bf1fbb21febd64ba3d7efe42b19260ea8ce0c25" }
