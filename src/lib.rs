@@ -43,7 +43,6 @@ impl Environment {
 			let running = running.clone();
 			gameboy.register_breakpoint_callback(move |_bp| {
 				use std::sync::atomic::Ordering;
-				println!("hit breakpoint");
 				running.store(false, Ordering::Relaxed); // sets environment->running = false
 			});
 		}
