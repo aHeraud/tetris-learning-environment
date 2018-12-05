@@ -29,6 +29,11 @@ typedef struct Environment Environment;
 void destroy_environment(Environment *env_ptr);
 
 /*
+ * Get the number of lines cleared during the current game
+ */
+int32_t get_lines(const Environment *env_ptr);
+
+/*
  * Returns a pointer to the beginning of the frame buffer of the emulator, which holds the contents of the screen.
  *
  * The array holds WIDTH * HEIGHT pixels, where each pixel is a 32-bit RGBA integer.
