@@ -21,3 +21,9 @@ By setting a breakpoint at one of these addresses the emulator will call a break
 The score is stored as a 3-byte little endian binary coded decimal in WRAM at addresses [0xC0A0..=0xC0A2]. Each digit is stored as 4-bits.
 
 For example, if the 3-bytes stored at [0xC0A0..=0xC0A2] are [0x73, 0x64, 0x01], then the score would be 16473.
+
+## Lines Cleared
+
+The number of lines cleared is stored as a 2-byte little endian binary coded decimal in HRAM at address [0xFF9E..=0xFF9F].
+
+For example, if the 2-bytes stored at 0xFF9E and 0xFF9F are 0x10, 0x11, then the number of lines cleared would be 1110.

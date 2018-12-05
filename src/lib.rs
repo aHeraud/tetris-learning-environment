@@ -106,14 +106,35 @@ impl Environment {
 
 		let mut score: i32 = 0;
 		for i in 0..3 {
+			score *= 100; // shift over 2 decimal places
+
 			let high_digit = ((score_bcd[i] & 0xF0) >> 4) as i32;
 			let low_digit = ((score_bcd[i]) & 0x0F) as i32;
 
-			score += high_digit * (10 * ((2 * (i as i32)) + 1));
-			score += low_digit * (10 * (2 * (i as i32)));
+			score += (high_digit * 10) + low_digit;
 		}
 
 		score
+	}
+
+	/// Returns the number of lines cleared in the current game (undefined if there is not a game in progress)
+	/// The number of lines cleared is stored in HRAM at addresses 0xFF9E, 0xFF9F as a little endian BCD.
+	pub fn get_lines(&self) -> i32 {
+		use agb_core::gameboy::debugger::DebuggerInterface;
+
+		let mut lines = 0;
+		let lines_bcd = [self.gameboy.read_memory(0xFF9F), self.gameboy.read_memory(0xFF9E)];
+
+		for i in 0..2 {
+			lines *= 100; // shift over 2 decimal places
+
+			let high_digit = ((lines_bcd[i] & 0xF0) >> 4) as i32;
+			let low_digit = ((lines_bcd[i]) & 0x0F) as i32;
+
+			lines += (high_digit * 10) + low_digit;
+		}
+
+		lines
 	}
 
 	pub fn set_key_state(&mut self, key: Key, pressed: bool) {
@@ -254,4 +275,15 @@ pub unsafe extern "C" fn get_score(env_ptr: *const Environment) -> i32 {
 
 	let environment = & *env_ptr;
 	environment.get_score()
+}
+
+/// Get the number of lines cleared during the current game
+#[no_mangle]
+pub unsafe extern "C" fn get_lines(env_ptr: *const Environment) -> i32 {
+	if env_ptr == ptr::null_mut() {
+		abort();
+	}
+
+	let environment = & *env_ptr;
+	environment.get_lines()
 }
