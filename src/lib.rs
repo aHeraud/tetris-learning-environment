@@ -95,6 +95,8 @@ impl Environment {
 		self.running.load(Ordering::Relaxed)
 	}
 
+	/// borrow the contents of the framebuffer
+	/// the framebuffer is a 160*144 array of RGBA pixels stored as u32s
 	pub fn get_pixels<'a>(&'a self) -> &'a[u32] {
 		self.gameboy.get_framebuffer()
 	}
@@ -149,6 +151,20 @@ impl Environment {
 				*state = pressed;
 			}
 		}
+	}
+
+	/// Returns an array of RGB bytes (each component is 8-bits)
+	pub fn rgb_pixels(&self) -> Box<[u8]> {
+		let rgba = self.gameboy.get_framebuffer();
+
+		let mut rgb = Vec::with_capacity(rgba.len() * 3);
+		for pixel in rgba {
+			rgb.push((*pixel >> 24) as u8); //red component
+			rgb.push(((*pixel >> 16) & 0xFF) as u8); //green component
+			rgb.push(((*pixel >> 8) & 0xFF) as u8); //blue component
+		}
+
+		rgb.into_boxed_slice()
 	}
 }
 
@@ -253,6 +269,29 @@ pub unsafe extern "C" fn get_pixels(env_ptr: *mut Environment) -> *const u32 {
 		let environment = &mut *env_ptr;
 		environment.get_pixels().as_ptr()
 	}
+}
+
+/// Returns a pointer to an array holding WIDTH * LENGTH rgb pixels (each component is 8-bits)
+/// the length of the array is WIDTH * LENGTH * 3 bytes
+/// the array returned by this function must be freed by the free_rgb_pixel_array function
+#[no_mangle]
+pub unsafe extern "C" fn get_rgb_pixels(env_ptr: *mut Environment) -> *mut u8 {
+	// TODO: pass length by reference
+	if env_ptr == ptr::null_mut() {
+		abort();
+	}
+	else {
+		let environment = & *env_ptr;
+		let slice = Box::into_raw(environment.rgb_pixels());
+		let s: &mut[u8] = &mut*slice;
+		s.as_mut_ptr()
+	}
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn free_rgb_pixel_array(buffer: *mut u8) {
+	use std::slice;
+	Box::from(slice::from_raw_parts_mut(buffer, WIDTH * HEIGHT * 3));
 }
 
 #[no_mangle]
