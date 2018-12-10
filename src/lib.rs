@@ -271,28 +271,34 @@ pub unsafe extern "C" fn get_pixels(env_ptr: *mut Environment) -> *const u32 {
 	}
 }
 
-/// Returns a pointer to an array holding WIDTH * LENGTH rgb pixels (each component is 8-bits)
-/// the length of the array is WIDTH * LENGTH * 3 bytes
-/// the array returned by this function must be freed by the free_rgb_pixel_array function
+/// Get the
 #[no_mangle]
-pub unsafe extern "C" fn get_rgb_pixels(env_ptr: *mut Environment) -> *mut u8 {
-	// TODO: pass length by reference
+pub unsafe extern "C" fn get_rgb_pixels(env_ptr: *mut Environment, array: *mut u8, length: usize) {
+	use std::slice;
 	if env_ptr == ptr::null_mut() {
 		abort();
 	}
 	else {
 		let environment = & *env_ptr;
-		let slice = Box::into_raw(environment.rgb_pixels());
-		let s: &mut[u8] = &mut*slice;
-		s.as_mut_ptr()
-	}
-}
+		let slice = slice::from_raw_parts_mut(array, length);
+		let rgba = environment.get_pixels();
 
-#[no_mangle]
-pub unsafe extern "C" fn free_rgb_pixel_array(buffer: *mut u8) {
-	use std::slice;
-	let s = slice::from_raw_parts_mut(buffer, WIDTH * HEIGHT * 3);
-	Box::from_raw(s);
+		if length < rgba.len() {
+			// TODO: better error handling
+			println!("get_rgb_pixels: buffer was too small to hold pixel data");
+			abort();
+		}
+
+		let mut i = 0;
+		for pixel in rgba {
+			slice[i] = (*pixel >> 24) as u8; // red component
+			i += 1;
+			slice[i] = ((*pixel >> 16) & 0xFF) as u8; // green component
+			i += 1;
+			slice[i] = ((*pixel >> 8) & 0xFF) as u8; //blue component
+			i += 1;
+		}
+	}
 }
 
 #[no_mangle]

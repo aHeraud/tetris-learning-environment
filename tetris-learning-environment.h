@@ -28,8 +28,6 @@ typedef struct Environment Environment;
  */
 void destroy_environment(Environment *env_ptr);
 
-void free_rgb_pixel_array(uint8_t *buffer);
-
 /*
  * Get the number of lines cleared during the current game
  */
@@ -45,11 +43,9 @@ int32_t get_lines(const Environment *env_ptr);
 const uint32_t *get_pixels(Environment *env_ptr);
 
 /*
- * Returns a pointer to an array holding WIDTH * LENGTH rgb pixels (each component is 8-bits)
- * the length of the array is WIDTH * LENGTH * 3 bytes
- * the array returned by this function must be freed by the free_rgb_pixel_array function
+ * Get the
  */
-uint8_t *get_rgb_pixels(Environment *env_ptr);
+void get_rgb_pixels(Environment *env_ptr, uint8_t *array, uintptr_t length);
 
 /*
  * Get the score from a game of tetris that just ended.
