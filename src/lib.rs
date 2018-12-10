@@ -291,7 +291,8 @@ pub unsafe extern "C" fn get_rgb_pixels(env_ptr: *mut Environment) -> *mut u8 {
 #[no_mangle]
 pub unsafe extern "C" fn free_rgb_pixel_array(buffer: *mut u8) {
 	use std::slice;
-	Box::from(slice::from_raw_parts_mut(buffer, WIDTH * HEIGHT * 3));
+	let s = slice::from_raw_parts_mut(buffer, WIDTH * HEIGHT * 3);
+	Box::from_raw(s);
 }
 
 #[no_mangle]
